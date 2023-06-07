@@ -1,0 +1,95 @@
+﻿@using CardMessageApp.Web.Helpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CardMessageApp.Model.Dto.CardMessageViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script>
+    if (typeof (controllerData) == "undefined") {
+        var controllerData = {};
+    }
+    window.controllerData = {
+        DinnerModel: {
+            OccasionListing: @Html.Raw(new JsonSerializationProcessor().Serialize(@Model.OccasionListing)),
+            AgeListing: @Html.Raw(new JsonSerializationProcessor().Serialize(@Model.AgeListing)),
+            RelationListing: @Html.Raw(new JsonSerializationProcessor().Serialize(@Model.RelationListing)),
+            PersonalityAttListing: @Html.Raw(new JsonSerializationProcessor().Serialize(@Model.AtrributesListing)),
+            SelectedOccasion: null,
+            SelectedAge: null,
+            SelectedRelation: null,
+            ErrorMsg: null,
+            ServerResponse: null,
+        
+            Spinner: false,
+            showHeadings: false,
+            MakeItPoetic:false
+
+        }
+    }
+
+
+
+</script>
+<link href="~/css/toggles.css" asp-append-version="true" rel="stylesheet" />
+<link href="~/css/spinner.css" asp-append-version="true" rel="stylesheet" />
+<header>
+    <h1> Card Creator</h1>
+</header>
+<main ng-app="app" ng-init="" ng-controller="CardMessageCtrl">
+    <form id="cardForm">
+        <label for="recipientName">Recipient's Name:</label>
+        <input type="text" id="recipientName" ng-model="Name" name="recipientName" required>
+        <div style="display: inline">
+            <label for="occasions">Occasion:</label>
+            <select id="occasions" name="select" ng-options="d.Name for d in OccasionListing" ng-model="SelectedOccasion"></select>
+            
+            <label for="relation">Relation:</label>
+            <select id="relation" name="select" ng-options="d.Name for d in RelationListing" ng-model="SelectedRelation"></select>
+
+            <label for="Age">Age:</label>
+            <select id="age" name="select" ng-options="d.Name for d in AgeListing" ng-model="SelectedAge"></select>
+
+            <label for="poem">Make It Poetic:</label>
+            <input ng-model="MakeItPoetic" type="checkbox">
+           
+            @*     <div ng-repeat="r in PersonalityAttListing">
+
+                <div ><input ng-model="r.IsChecked" ng-checked="r.IsChecked" type="checkbox">
+                    <span class="slider"></span></div>
+
+            </div>*@
+            
+          
+            
+        </div>
+        <div style="display:block; padding-top:2%">
+            <div > Attributes</div>
+
+            <div style="padding-top:1%" ng-repeat="r in PersonalityAttListing">
+                {{r.Name}}
+                <label class="switch">
+                    <input ng-model="r.IsChecked" type="checkbox">
+                    <span class="slider"></span>
+                </label></div>
+
+        </div>
+
+        <div > <button ng-click="GetDinnerSuggestion()" type="button">Create Card</button>
+            <div class="loading" >
+                <div ng-if="Spinner" class="spinner">
+                    <div class="rect1"></div>
+                    <div class="rect2"></div>
+                    <div class="rect3"></div>
+                    <div class="rect4"></div>
+                    <div class="rect5"></div>
+                </div></div>
+            </div>
+        
+        <div>{{ServerResponse}}</div>
+    </form>
+    <div id="cardPreview">
+        <!-- Card preview will be displayed here -->
+    </div>
+</main>
+<script src="~/js/home.js" asp-append-version="true"></script>
